@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h2>Patient Observations</h2>
+<!--<div class="row" th:text="${observationBundle}"></div>-->
+<div th:if="${observationBundle.size() &gt; 0}" th:each="observation : ${observationBundle}" class="row">
+    <a th:href="${observation.getIdBase()}">
+        <span th:text="${observation.getIdBase()}"></span>
+    </a>
+</div>
+</body>
+</html>

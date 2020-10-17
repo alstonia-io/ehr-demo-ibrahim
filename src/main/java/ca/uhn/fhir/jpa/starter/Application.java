@@ -60,6 +60,7 @@ public class Application extends SpringBootServletInitializer {
 
     AnnotationConfigWebApplicationContext annotationConfigWebApplicationContext = new AnnotationConfigWebApplicationContext();
     annotationConfigWebApplicationContext.register(FhirTesterConfig.class);
+    annotationConfigWebApplicationContext.register(DemoController.class);
 
     DispatcherServlet dispatcherServlet = new DispatcherServlet(
       annotationConfigWebApplicationContext);

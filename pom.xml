@@ -22,6 +22,7 @@
     <properties>
         <java.version>8</java.version>
         <spring_boot_version>2.3.4.RELEASE</spring_boot_version>
+        <enforcer.skip>true</enforcer.skip>
     </properties>
 
     <prerequisites>
@@ -43,6 +44,11 @@
     </repositories>
 
     <dependencies>
+        <dependency>
+            <groupId>ca.uhn.hapi.fhir</groupId>
+            <artifactId>hapi-fhir-structures-dstu3</artifactId>
+            <version>${project.version}</version>
+        </dependency>
         <dependency>
             <groupId>org.eclipse.jetty.websocket</groupId>
             <artifactId>websocket-api</artifactId>
@@ -302,6 +308,26 @@
         <finalName>ROOT</finalName>
 
         <plugins>
+            <plugin>
+                <groupId>org.eclipse.jetty</groupId>
+                <artifactId>jetty-maven-plugin</artifactId>
+                <version>${jetty_version}</version>
+                <configuration>
+                    <webApp>
+                        <contextPath>/</contextPath>
+                        <allowDuplicateFragmentNames>true</allowDuplicateFragmentNames>
+                    </webApp>
+                </configuration>
+            </plugin>
+            <!-- Tell Maven which Java source version you want to use -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>

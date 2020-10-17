@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h2>Patient Bundles</h2>
+<!--<div class="row" th:text="${patientBundle}"></div>-->
+<span>Patient Observation</span>
+<span>Patient Condition</span>
+<span>Patient Diagnostic Report</span>
+<div th:if="${patientBundle.size() &gt; 0}" th:each="patient : ${patientBundle}" class="row">
+
+    <a th:href="'/patient/'+${patient.getIdElement().getIdPart()}+'/observations'">
+        <span th:if="${patient.getName().size() &gt; 0}" th:text="${patient.getName().get(0).getFamily()}"></span>
+    </a>
+    <a th:href="'/patient/'+${patient.getIdElement().getIdPart()}+'/conditions'">
+        <span th:if="${patient.getName().size() &gt; 0}" th:text="${patient.getName().get(0).getFamily()}"></span>
+    </a>
+    <a th:href="'/patient/'+${patient.getIdElement().getIdPart()}+'/diagnosticReports'">
+        <span th:if="${patient.getName().size() &gt; 0}" th:text="${patient.getName().get(0).getFamily()}"></span>
+    </a>
+</div>
+</body>
+</html>
