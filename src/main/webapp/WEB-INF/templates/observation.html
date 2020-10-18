@@ -2,15 +2,40 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>EHR Demo</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
 </head>
 <body>
-<h2>Patient Observations</h2>
-<!--<div class="row" th:text="${observationBundle}"></div>-->
-<div th:if="${observationBundle.size() &gt; 0}" th:each="observation : ${observationBundle}" class="row">
-    <a th:href="${observation.getIdBase()}">
-        <span th:text="${observation.getIdBase()}"></span>
-    </a>
+<div class="container">
+    <div th:insert="fragment/header :: navbar"></div>
+
+    <h1>Patient Observations</h1>
+
+    <table class="table table-striped">
+        <thead class="thead-dark">
+            <tr>
+                <th>Time</th>
+                <th>Description</th>
+                <th>details</th>
+            </tr>
+        </thead>
+        <tbody th:if="${observationBundle.size() &gt; 0}" th:each="observation : ${observationBundle}" >
+            <tr>
+                <td>
+                    <span th:text="${observation.getEffectiveDateTimeType()}"></span>
+                </td>
+                <td>
+                    <span th:utext="${observation.getText().getDivAsString()}"></span>
+                </td>
+                <td>
+                    <a th:href="${observation.getIdBase()}">
+                        <span th:text="${observation.getIdBase()}"></span>
+                    </a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
 </div>
 </body>
 </html>

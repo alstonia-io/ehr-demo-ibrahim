@@ -1,13 +1,11 @@
 package ca.uhn.fhir.jpa.starter;
 
 import ca.uhn.fhir.context.FhirContext;
-//import ca.uhn.fhir.model.dstu3.resource.Patient;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
-import ca.uhn.fhir.rest.gclient.IQuery;
 import ca.uhn.fhir.rest.gclient.ReferenceClientParam;
+import ca.uhn.fhir.rest.gclient.TokenClientParam;
 import ca.uhn.fhir.to.model.HomeRequest;
 import org.hl7.fhir.dstu3.model.*;
-import org.hl7.fhir.instance.model.api.IBaseBundle;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
@@ -28,27 +26,32 @@ public class DemoController {
   IGenericClient client = ctx.newRestfulGenericClient(serverBase);
 
   @RequestMapping(value = {"/demo"}, method = RequestMethod.GET)
-  public String getAllPatients(final HttpServletRequest theReq, final HomeRequest theRequest,
-                               final BindingResult theBindingResult, final ModelMap theModel) {
+  public String showDemoView(final HttpServletRequest theReq, final HomeRequest theRequest) {
+    return "demo";
+  }
+
+  @RequestMapping(value = {"/doctor-view"}, method = RequestMethod.GET)
+  public String showDoctorPanel(final HttpServletRequest theReq, final HomeRequest theRequest,
+                                final BindingResult theBindingResult, final ModelMap theModel) {
     Bundle bundle = client.search().forResource(Patient.class).returnBundle(Bundle.class).prettyPrint().execute();
     List<Patient> patients = new ArrayList<>();
-    for(Bundle.BundleEntryComponent entry: bundle.getEntry()){
-      Patient patient =  (Patient)entry.getResource();
+    for (Bundle.BundleEntryComponent entry : bundle.getEntry()) {
+      Patient patient = (Patient) entry.getResource();
       patients.add(patient);
       patient.getId();
     }
     theModel.addAttribute("patientBundle", patients);
-    return "demo";
+    return "doctor-panel";
   }
 
   @RequestMapping(value = {"/patient/{id}/observations"}, method = RequestMethod.GET)
   public String getObservations(@PathVariable("id") String patientId, final HttpServletRequest theReq, final HomeRequest theRequest,
-                               final BindingResult theBindingResult, final ModelMap theModel) {
+                                final BindingResult theBindingResult, final ModelMap theModel) {
     Bundle bundle = client.search().forResource(Observation.class).where(new ReferenceClientParam("patient").hasId(patientId)).
       returnBundle(Bundle.class).prettyPrint().execute();
     List<Observation> observations = new ArrayList<>();
-    for(Bundle.BundleEntryComponent entry: bundle.getEntry()){
-      Observation observation =  (Observation) entry.getResource();
+    for (Bundle.BundleEntryComponent entry : bundle.getEntry()) {
+      Observation observation = (Observation) entry.getResource();
       observations.add(observation);
       observation.getId();
     }
@@ -58,12 +61,12 @@ public class DemoController {
 
   @RequestMapping(value = {"/patient/{id}/conditions"}, method = RequestMethod.GET)
   public String getConditions(@PathVariable("id") String patientId, final HttpServletRequest theReq, final HomeRequest theRequest,
-                                final BindingResult theBindingResult, final ModelMap theModel) {
+                              final BindingResult theBindingResult, final ModelMap theModel) {
     Bundle bundle = client.search().forResource(Condition.class).where(new ReferenceClientParam("patient").hasId(patientId)).
       returnBundle(Bundle.class).prettyPrint().execute();
     List<Condition> conditions = new ArrayList<>();
-    for(Bundle.BundleEntryComponent entry: bundle.getEntry()){
-      Condition condition =  (Condition) entry.getResource();
+    for (Bundle.BundleEntryComponent entry : bundle.getEntry()) {
+      Condition condition = (Condition) entry.getResource();
       conditions.add(condition);
       condition.getId();
     }
@@ -71,18 +74,31 @@ public class DemoController {
     return "condition";
   }
 
-  @RequestMapping(value = {"/patient/{id}/diagnosticReport"}, method = RequestMethod.GET)
+  @RequestMapping(value = {"/patient/{id}/diagnosticReports"}, method = RequestMethod.GET)
   public String getDiagnosticReport(@PathVariable("id") String patientId, final HttpServletRequest theReq, final HomeRequest theRequest,
-                                final BindingResult theBindingResult, final ModelMap theModel) {
+                                    final BindingResult theBindingResult, final ModelMap theModel) {
     Bundle bundle = client.search().forResource(DiagnosticReport.class).where(new ReferenceClientParam("patient").hasId(patientId)).
       returnBundle(Bundle.class).prettyPrint().execute();
     List<DiagnosticReport> diagnosticReports = new ArrayList<>();
-    for(Bundle.BundleEntryComponent entry: bundle.getEntry()){
-      DiagnosticReport diagnosticReport =  (DiagnosticReport) entry.getResource();
+    for (Bundle.BundleEntryComponent entry : bundle.getEntry()) {
+      DiagnosticReport diagnosticReport = (DiagnosticReport) entry.getResource();
       diagnosticReports.add(diagnosticReport);
       diagnosticReport.getId();
     }
     theModel.addAttribute("diagnosticReportBundle", diagnosticReports);
     return "diagnosticReport";
+  }
+
+  @RequestMapping(value = {"/patient/{id}/"}, method = RequestMethod.GET)
+  public String showPatientView(@PathVariable("id") String patientId, final HttpServletRequest theReq, final HomeRequest theRequest,
+                                final BindingResult theBindingResult, final ModelMap theModel) {
+    Bundle bundle = client.search().forResource(Patient.class).where(new TokenClientParam("_id").exactly().code(patientId)).
+      returnBundle(Bundle.class).prettyPrint().execute();
+    Patient patient = null;
+    for (Bundle.BundleEntryComponent entry : bundle.getEntry()) {
+      patient = (Patient) entry.getResource();
+    }
+    theModel.addAttribute("Patient", patient);
+    return "patient-profile";
   }
 }
