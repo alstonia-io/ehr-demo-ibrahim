@@ -9,12 +9,12 @@ import org.hl7.fhir.dstu3.model.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.swing.text.html.HTML;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -87,6 +87,39 @@ public class DemoController {
     }
     theModel.addAttribute("diagnosticReportBundle", diagnosticReports);
     return "diagnosticReport";
+  }
+
+  @RequestMapping(value = {"/patient/{id}/showPrescription"}, method = RequestMethod.GET)
+  public String showPrescriptionForm(@PathVariable("id") String patientId,final HttpServletRequest theReq,
+                                     final HomeRequest theRequest, final ModelMap theModel) {
+    Prescription prescription = new Prescription();
+    theModel.addAttribute("prescription", prescription);
+    theModel.addAttribute("PatientId", patientId);
+    return "create-prescription";
+  }
+
+  @RequestMapping(
+    value = {"/createPrescription"}
+    )
+  public String createPrescription(final HttpServletRequest theReq, final HomeRequest theRequest,
+                                    final BindingResult theBindingResult, final ModelMap theModel,
+                                 @ModelAttribute("prescription") Prescription prescription) {
+    Observation obs  = new Observation();
+    Coding coding = new Coding();
+    coding.setCode(prescription.getCode());
+    coding.setDisplay(prescription.getDisplay());
+    coding.setSystem(prescription.getSystem());
+    Reference ref = new Reference("Patient/"+prescription.getPatientId());
+    List<Coding> codings = new ArrayList<>();
+    codings.add(coding);
+    CodeableConcept codeableConcept = new CodeableConcept();
+    codeableConcept.setCoding(codings);
+    obs.setCode(codeableConcept);
+    obs.setStatus(Observation.ObservationStatus.FINAL);
+    obs.setSubject(ref);
+    client.create().resource(obs).execute();
+    theModel.addAttribute("successMsg", "Patient Observation Created Successfully. ");
+    return "create-prescription-success";
   }
 
   @RequestMapping(value = {"/patient/{id}/"}, method = RequestMethod.GET)

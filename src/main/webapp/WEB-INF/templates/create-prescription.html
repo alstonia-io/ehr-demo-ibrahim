@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style type="text/css">
+        label {
+            display: inline-block;
+            width: 200px;
+            margin: 5px;
+            text-align: left;
+        }
+        input[type=text], input[type=password], select {
+            display: inline-block;
+            width: 200px;
+        }
+        input[type=radio] {
+            margin-left: 45px;
+        }
+        input[type=checkbox] {
+            margin-right: 190px;
+        }
+        button {
+            padding: 5px;
+            margin: 10px;
+        }
+    </style>
+    <meta charset="UTF-8">
+    <title>EHR Demo</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+</head>
+<body>
+<div class="container">
+    <div th:insert="fragment/header :: navbar"></div>
+
+    <h1>Create Prescription</h1>
+    <div>
+        <form action="#" th:action="@{/createPrescription}" th:object="${prescription}" method="post">
+            <label>Patient Id:</label>
+            <input type="text" th:field="*{PatientId}"/>
+            <br/>
+
+            <label>Code:</label>
+            <input type="text" th:field="*{Code}" />
+            <br/>
+
+            <label>System:</label>
+            <input type="text" th:field="*{System}" />
+            <br/>
+
+            <label>Display:</label>
+            <input type="text" th:field="*{Display}" />
+            <br/>
+
+
+            <button type="submit">Create Presciption</button>
+        </form>
+    </div>
+</div>
+</body>
+</html>
