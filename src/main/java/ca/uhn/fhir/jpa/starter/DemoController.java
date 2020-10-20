@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.swing.text.html.HTML;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 
@@ -117,6 +118,13 @@ public class DemoController {
     obs.setCode(codeableConcept);
     obs.setStatus(Observation.ObservationStatus.FINAL);
     obs.setSubject(ref);
+    Narrative narrative = new Narrative();
+    narrative.setDivAsString("<div>" + prescription.getDisplay() + "</div>");
+    obs.setText(narrative);
+    obs.setEffective(new DateType(new Date()));
+    obs.setEffective(new DateTimeType(
+      new Date()
+    ));
     client.create().resource(obs).execute();
     theModel.addAttribute("successMsg", "Patient Observation Created Successfully. ");
     return "create-prescription-success";
@@ -133,5 +141,19 @@ public class DemoController {
     }
     theModel.addAttribute("Patient", patient);
     return "patient-profile";
+  }
+
+  @RequestMapping(value = {"/media-viewer/{id}"}, method = RequestMethod.GET)
+  public String showMediaViewerView(@PathVariable("id") String mediaId, final HttpServletRequest theReq, final HomeRequest theRequest,
+                                final BindingResult theBindingResult, final ModelMap theModel) {
+    Bundle bundle = client.search().forResource(Media.class).where(new TokenClientParam("_id").exactly().code(mediaId)).
+      returnBundle(Bundle.class).prettyPrint().execute();
+    Media media = null;
+    for (Bundle.BundleEntryComponent entry : bundle.getEntry()) {
+      media = (Media) entry.getResource();
+    }
+    theModel.addAttribute("media", media);
+
+    return "media-viewer";
   }
 }

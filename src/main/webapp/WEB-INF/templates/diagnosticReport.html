@@ -15,18 +15,14 @@
     <table class="table table-striped">
         <thead class="thead-dark">
         <tr>
-            <th>Time</th>
-            <th>Status</th>
+            <th>Description</th>
             <th>details</th>
         </tr>
         </thead>
         <tbody th:if="${diagnosticReportBundle.size() &gt; 0}" th:each="diagnosticReport : ${diagnosticReportBundle}" >
         <tr>
             <td>
-                <span th:text="${diagnosticReport.getEffectiveDateTimeType()}"></span>
-            </td>
-            <td>
-                <span th:utext="${diagnosticReport.getStatus()}"></span>
+                <div th:utext="${diagnosticReport.getText().getDivAsString()}"></div>
             </td>
             <td>
                 <a th:href="${diagnosticReport.getIdBase()}">

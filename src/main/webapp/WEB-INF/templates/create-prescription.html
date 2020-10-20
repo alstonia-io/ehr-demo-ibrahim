@@ -35,24 +35,25 @@
     <h1>Create Prescription</h1>
     <div>
         <form action="#" th:action="@{/createPrescription}" th:object="${prescription}" method="post">
-            <label>Patient Id:</label>
-            <input type="text" th:field="*{PatientId}"/>
+            <div class="form-group">
+
+            <label for="patientId">Patient Id:</label>
+            <input class="form-control" type="text" th:field="*{PatientId}" id="patientId"/>
             <br/>
 
-            <label>Code:</label>
-            <input type="text" th:field="*{Code}" />
+            <label for="code">Code:</label>
+            <input class="form-control" type="text" th:field="*{Code}" id="code"/>
             <br/>
 
-            <label>System:</label>
-            <input type="text" th:field="*{System}" />
+            <label for="system">System:</label>
+            <input class="form-control" type="text" th:field="*{System}" id="system" />
             <br/>
 
-            <label>Display:</label>
-            <input type="text" th:field="*{Display}" />
+            <label for="display">Display:</label>
+            <input class="form-control" type="text" th:field="*{Display}" id="display"/>
             <br/>
 
-
-            <button type="submit">Create Presciption</button>
+            <button class="btn btn-primary" type="submit">Create Presciption</button>
         </form>
     </div>
 </div>
