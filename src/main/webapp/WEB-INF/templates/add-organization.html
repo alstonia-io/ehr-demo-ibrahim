@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style type="text/css">
+        label {
+            display: inline-block;
+            width: 200px;
+            margin: 5px;
+            text-align: left;
+        }
+        input[type=text], input[type=password], select {
+            display: inline-block;
+            width: 200px;
+        }
+        input[type=radio] {
+            margin-left: 45px;
+        }
+        input[type=checkbox] {
+            margin-right: 190px;
+        }
+        button {
+            padding: 5px;
+            margin: 10px;
+        }
+    </style>
+    <meta charset="UTF-8">
+    <title>EHR Demo</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+</head>
+<body>
+<div class="container">
+    <div th:insert="fragment/header :: navbar"></div>
+
+    <h1>Add Organization</h1>
+    <div>
+        <form action="#" th:action="@{/addOrganization}" th:object="${organisation}" method="post">
+            <div class="form-group">
+
+                <label for="patientId">Name:</label>
+                <input class="form-control" type="text" th:field="*{Name}" id="patientId"/>
+                <br/>
+
+                <label for="code">Phone:</label>
+                <input class="form-control" type="text" th:field="*{Phone}" id="code"/>
+                <br/>
+
+                <label for="system">Website:</label>
+                <input class="form-control" type="text" th:field="*{Website}" id="system" />
+                <br/>
+
+                <button class="btn btn-primary" type="submit">Add Organization</button>
+        </form>
+    </div>
+</div>
+</body>
+</html>

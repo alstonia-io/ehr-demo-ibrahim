@@ -6,6 +6,7 @@ import ca.uhn.fhir.rest.gclient.ReferenceClientParam;
 import ca.uhn.fhir.rest.gclient.TokenClientParam;
 import ca.uhn.fhir.to.model.HomeRequest;
 import org.hl7.fhir.dstu3.model.*;
+import org.hl7.fhir.dstu3.model.Organization;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
@@ -43,6 +44,36 @@ public class DemoController {
     }
     theModel.addAttribute("patientBundle", patients);
     return "doctor-panel";
+  }
+
+  @RequestMapping(value = {"/patient-view"}, method = RequestMethod.GET)
+  public String showPatientPanel(final HttpServletRequest theReq, final HomeRequest theRequest,
+                                final BindingResult theBindingResult, final ModelMap theModel) {
+    Bundle bundle = client.search().forResource(Patient.class).returnBundle(Bundle.class).prettyPrint().execute();
+    List<Patient> patients = new ArrayList<>();
+    for (Bundle.BundleEntryComponent entry : bundle.getEntry()) {
+      Patient patient = (Patient) entry.getResource();
+      patients.add(patient);
+      patient.getId();
+      break;
+    }
+    theModel.addAttribute("patientBundle", patients);
+    return "patient-panel";
+  }
+
+  @RequestMapping(value = {"/saas-admin"}, method = RequestMethod.GET)
+  public String showAdminPanel(final HttpServletRequest theReq, final HomeRequest theRequest,
+                                 final BindingResult theBindingResult, final ModelMap theModel) {
+    Bundle bundle = client.search().forResource(Organization.class).returnBundle(Bundle.class).prettyPrint().execute();
+    List<Organization> organizations = new ArrayList<>();
+    for (Bundle.BundleEntryComponent entry : bundle.getEntry()) {
+      Organization organization = (Organization) entry.getResource();
+      organizations.add(organization);
+      organization.getId();
+      break;
+    }
+    theModel.addAttribute("organizationBundle", organizations);
+    return "saas-admin";
   }
 
   @RequestMapping(value = {"/patient/{id}/observations"}, method = RequestMethod.GET)
@@ -99,6 +130,14 @@ public class DemoController {
     return "create-prescription";
   }
 
+  @RequestMapping(value = {"/showOrganization"}, method = RequestMethod.GET)
+  public String showOrganizationForm(final HttpServletRequest theReq,
+                                     final HomeRequest theRequest, final ModelMap theModel) {
+    Organisation organisation = new Organisation();
+    theModel.addAttribute("organisation", organisation);
+    return "add-organization";
+  }
+
   @RequestMapping(
     value = {"/createPrescription"}
     )
@@ -128,6 +167,31 @@ public class DemoController {
     client.create().resource(obs).execute();
     theModel.addAttribute("successMsg", "Patient Observation Created Successfully. ");
     return "create-prescription-success";
+  }
+
+  @RequestMapping(
+    value = {"/addOrganization"}
+  )
+  public String addOrganization(final HttpServletRequest theReq, final HomeRequest theRequest,
+                                   final BindingResult theBindingResult, final ModelMap theModel,
+                                   @ModelAttribute("organisation") Organisation organisation) {
+    Organization org = new Organization();
+    org.setName(organisation.getName());
+    ContactPoint contact = new ContactPoint();
+    contact.setSystem(ContactPoint.ContactPointSystem.PHONE);
+    contact.setValue(organisation.getPhone());
+    List<ContactPoint> contactPoints = new ArrayList<>();
+    contactPoints.add(contact);
+    org.setTelecom(contactPoints);
+    Identifier iden = new Identifier();
+    iden.setUse(Identifier.IdentifierUse.OFFICIAL);
+    iden.setSystem(organisation.getWebsite());
+    List<Identifier> idenList = new ArrayList<>();
+    idenList.add(iden);
+    org.setIdentifier(idenList);
+    client.create().resource(org).execute();
+    theModel.addAttribute("successMsg", "Organization Created Successfully. ");
+    return "add-organization-success";
   }
 
   @RequestMapping(value = {"/patient/{id}/"}, method = RequestMethod.GET)

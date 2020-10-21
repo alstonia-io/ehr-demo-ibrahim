@@ -2,9 +2,58 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>EHR Demo</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
 </head>
 <body>
+<div class="container">
+    <div th:insert="fragment/header :: navbar"></div>
 
+    <h1>Patient View</h1>
+
+    <table class="table table-striped">
+        <thead class="thead-dark">
+        <tr>
+            <th>Name</th>
+            <th>Profile</th>
+            <th>Observations</th>
+            <th>Conditions</th>
+            <th>Diagnostic Reports</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody th:if="${patientBundle.size() &gt; 0}" th:each="patient : ${patientBundle}">
+        <tr>
+            <td>
+                <span th:if="${patient.getName().size() &gt; 0}" th:text="${patient.getName().get(0).getNameAsSingleString()}"></span>
+            </td>
+            <td>
+                <a th:href="'/patient/'+${patient.getIdElement().getIdPart()}+'/'">
+                    View
+                </a>
+            </td>
+            <td>
+                <a th:href="'/patient/'+${patient.getIdElement().getIdPart()}+'/observations'">
+                    View
+                </a>
+            </td>
+            <td>
+                <a th:href="'/patient/'+${patient.getIdElement().getIdPart()}+'/conditions'">
+                    View
+                </a>
+            </td>
+            <td>
+                <a th:href="'/patient/'+${patient.getIdElement().getIdPart()}+'/diagnosticReports'">
+                    View
+                </a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <div th:unless="${patientBundle.size() &gt; 0}" class="alert alert-primary" role="alert">
+        No patients found in the database.
+    </div>
+</div>
 </body>
 </html>
