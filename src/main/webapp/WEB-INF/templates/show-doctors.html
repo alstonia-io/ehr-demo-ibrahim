@@ -10,7 +10,7 @@
 <div class="container">
     <div th:insert="fragment/header :: navbar"></div>
 
-    <h1>Patient View</h1>
+    <h1>Admin View | Show Doctors</h1>
 
     <table class="table table-striped">
         <thead class="thead-dark">
@@ -20,6 +20,7 @@
             <th>Observations</th>
             <th>Conditions</th>
             <th>Diagnostic Reports</th>
+            <th></th>
         </tr>
         </thead>
         <tbody th:if="${patientBundle.size() &gt; 0}" th:each="patient : ${patientBundle}">
@@ -45,6 +46,11 @@
             <td>
                 <a th:href="'/patient/'+${patient.getIdElement().getIdPart()}+'/diagnosticReports'">
                     View
+                </a>
+            </td>
+            <td>
+                <a th:href="'/patient/'+${patient.getIdElement().getIdPart()}+'/showPrescription'">
+                    <button type="button" class="btn btn-info">Create Prescription</button>
                 </a>
             </td>
         </tr>

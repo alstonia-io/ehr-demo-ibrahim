@@ -10,24 +10,16 @@
 <div class="container">
     <div th:insert="fragment/header :: navbar"></div>
 
-    <h1>Admin View | Add Organization</h1>
+    <h1>Login to view your info</h1>
     <div>
-        <form action="#" th:action="@{/addOrganization}" th:object="${organisation}" method="post">
+        <form action="#" th:action="@{/patient-view}" method="get">
             <div class="form-group">
 
-                <label for="patientId">Name:</label>
-                <input class="form-control" type="text" th:field="*{Name}" id="patientId"/>
+                <label for="patientId">Patient Id:</label>
+                <input class="form-control" type="text" th:name="patientId" id="patientId"/>
                 <br/>
 
-                <label for="code">Phone:</label>
-                <input class="form-control" type="text" th:field="*{Phone}" id="code"/>
-                <br/>
-
-                <label for="system">Website:</label>
-                <input class="form-control" type="text" th:field="*{Website}" id="system" />
-                <br/>
-
-                <button class="btn btn-primary" type="submit">Add Organization</button>
+                <button class="btn btn-primary" type="submit">Login</button>
             </div>
         </form>
     </div>

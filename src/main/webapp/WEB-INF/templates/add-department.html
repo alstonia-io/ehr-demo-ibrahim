@@ -10,9 +10,9 @@
 <div class="container">
     <div th:insert="fragment/header :: navbar"></div>
 
-    <h1>Admin View | Add Organization</h1>
+    <h1>Admin View | Add Department</h1>
     <div>
-        <form action="#" th:action="@{/addOrganization}" th:object="${organisation}" method="post">
+        <form action="#" th:action="@{'/organisation/'+${parentorg}+'/createDepartment'}" th:object="${organisation}" method="post">
             <div class="form-group">
 
                 <label for="patientId">Name:</label>
@@ -27,7 +27,7 @@
                 <input class="form-control" type="text" th:field="*{Website}" id="system" />
                 <br/>
 
-                <button class="btn btn-primary" type="submit">Add Organization</button>
+                <button class="btn btn-primary" type="submit">Add Department</button>
             </div>
         </form>
     </div>

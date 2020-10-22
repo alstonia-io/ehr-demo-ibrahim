@@ -10,28 +10,47 @@
     <div class="container">
         <div th:insert="fragment/header :: navbar"></div>
 
-        <h1>Admin View</h1>
+        <h1>Admin View | Organisations</h1>
 
         <table class="table table-striped">
             <thead class="thead-dark">
             <tr>
-                <th>Organizations</th>
-                <th></th>
+                <th>Name</th>
+                <th>Details</th>
+                <th>Departments</th>
+                <th>Action</th>
             </tr>
             </thead>
             <tbody th:if="${organizationBundle.size() &gt; 0}" th:each="organization : ${organizationBundle}">
             <tr>
                 <td>
-                    <a th:href="'/organization/'+${organization.getIdElement().getIdPart()}+'/'">
-                        View
+                    <span th:text="${organization.getName()}"></span>
+                </td>
+                <td>
+                    <a th:href="${organization.getIdBase()}+'/'">
+                        Details
+                    </a>
+                </td>
+                <td>
+                    <a th:href="'/organisation/'+${organization.getIdElement().getIdPart()}+'/departments'">
+                        Departments
+                    </a>
+                </td>
+                <td>
+                    <a th:href="'/organisation/'+${organization.getIdElement().getIdPart()}+'/createDepartment'">
+                        <button type="button" class="btn btn-info">Create Department</button>
                     </a>
                 </td>
             </tr>
             </tbody>
         </table>
 
-        <a th:href="'/showOrganization'">
+        <a th:href="/showOrganization">
             <button type="button" class="btn btn-info">Add Organization</button>
+        </a>
+
+        <a th:href="/showDoctors">
+            <button type="button" class="btn btn-info">Show Doctors</button>
         </a>
     </div>
 </body>

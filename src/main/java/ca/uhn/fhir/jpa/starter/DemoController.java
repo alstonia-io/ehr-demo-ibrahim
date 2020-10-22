@@ -49,7 +49,9 @@ public class DemoController {
   @RequestMapping(value = {"/patient-view"}, method = RequestMethod.GET)
   public String showPatientPanel(final HttpServletRequest theReq, final HomeRequest theRequest,
                                 final BindingResult theBindingResult, final ModelMap theModel) {
-    Bundle bundle = client.search().forResource(Patient.class).returnBundle(Bundle.class).prettyPrint().execute();
+    String patientId = theReq.getParameter("patientId");
+    Bundle bundle = client.search().forResource(Patient.class).where(new TokenClientParam("_id").exactly().code(patientId)).
+      returnBundle(Bundle.class).prettyPrint().execute();
     List<Patient> patients = new ArrayList<>();
     for (Bundle.BundleEntryComponent entry : bundle.getEntry()) {
       Patient patient = (Patient) entry.getResource();
@@ -61,16 +63,23 @@ public class DemoController {
     return "patient-panel";
   }
 
+  @RequestMapping(value = {"/patient-login"}, method = RequestMethod.GET)
+  public String showPatientLoginView(final HttpServletRequest theReq, final HomeRequest theRequest,
+                                 final BindingResult theBindingResult, final ModelMap theModel) {
+    return "patient-view";
+  }
+
   @RequestMapping(value = {"/saas-admin"}, method = RequestMethod.GET)
   public String showAdminPanel(final HttpServletRequest theReq, final HomeRequest theRequest,
                                  final BindingResult theBindingResult, final ModelMap theModel) {
     Bundle bundle = client.search().forResource(Organization.class).returnBundle(Bundle.class).prettyPrint().execute();
     List<Organization> organizations = new ArrayList<>();
     for (Bundle.BundleEntryComponent entry : bundle.getEntry()) {
+
       Organization organization = (Organization) entry.getResource();
-      organizations.add(organization);
-      organization.getId();
-      break;
+      if(organization.getPartOf().getReference() == null) {
+        organizations.add(organization);
+      }
     }
     theModel.addAttribute("organizationBundle", organizations);
     return "saas-admin";
@@ -115,7 +124,6 @@ public class DemoController {
     for (Bundle.BundleEntryComponent entry : bundle.getEntry()) {
       DiagnosticReport diagnosticReport = (DiagnosticReport) entry.getResource();
       diagnosticReports.add(diagnosticReport);
-      diagnosticReport.getId();
     }
     theModel.addAttribute("diagnosticReportBundle", diagnosticReports);
     return "diagnosticReport";
@@ -138,9 +146,56 @@ public class DemoController {
     return "add-organization";
   }
 
-  @RequestMapping(
-    value = {"/createPrescription"}
-    )
+  @RequestMapping(value = {"/organisation/{orgid}/createDepartment"}, method = RequestMethod.GET)
+  public String showDepartmentCreateForm(@PathVariable("orgid") String orgid, final HttpServletRequest theReq, final HomeRequest theRequest,
+                                final BindingResult theBindingResult, final ModelMap theModel) {
+    Organisation organisation = new Organisation();
+    theModel.addAttribute("organisation", organisation);
+    theModel.addAttribute("parentorg", orgid);
+    return "add-department";
+  }
+
+  @RequestMapping(value = {"/organisation/{orgid}/createDepartment"}, method = RequestMethod.POST)
+  public String createDepartment(@PathVariable("orgid") String orgid, final HttpServletRequest theReq,
+                                 final HomeRequest theRequest, final BindingResult theBindingResult,
+                                 final ModelMap theModel, @ModelAttribute("organization") Organisation organisation) {
+      Reference ref = new Reference();
+      ref.setReference("Organization/" + orgid);
+      Organization org = new Organization();
+      org.setName(organisation.getName());
+      ContactPoint contact = new ContactPoint();
+      contact.setSystem(ContactPoint.ContactPointSystem.PHONE);
+      contact.setValue(organisation.getPhone());
+      List<ContactPoint> contactPoints = new ArrayList<>();
+      contactPoints.add(contact);
+      org.setTelecom(contactPoints);
+      Identifier iden = new Identifier();
+      iden.setUse(Identifier.IdentifierUse.OFFICIAL);
+      iden.setSystem(organisation.getWebsite());
+      List<Identifier> idenList = new ArrayList<>();
+      idenList.add(iden);
+      org.setIdentifier(idenList);
+      org.setPartOf(ref);
+      client.create().resource(org).execute();
+      theModel.addAttribute("successMsg", "Organization Created Successfully. ");
+      return "redirect:/organisation/" + orgid + "/departments";
+  }
+
+  @RequestMapping(value = {"/organisation/{orgid}/departments"}, method = RequestMethod.GET)
+  public String showDepartments(@PathVariable("orgid") String orgid, final HttpServletRequest theReq, final HomeRequest theRequest,
+                                         final BindingResult theBindingResult, final ModelMap theModel) {
+    Bundle bundle = client.search().forResource(Organization.class).where(new ReferenceClientParam("partof").hasId(orgid)).
+      returnBundle(Bundle.class).prettyPrint().execute();
+    List<Organization> departments = new ArrayList<>();
+
+    for(Bundle.BundleEntryComponent entry : bundle.getEntry()){
+      departments.add((Organization) entry.getResource());
+    }
+    theModel.addAttribute("departments", departments);
+    return "show-department";
+  }
+
+  @RequestMapping(value = {"/createPrescription"})
   public String createPrescription(final HttpServletRequest theReq, final HomeRequest theRequest,
                                     final BindingResult theBindingResult, final ModelMap theModel,
                                  @ModelAttribute("prescription") Prescription prescription) {
